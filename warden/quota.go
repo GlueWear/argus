@@ -72,8 +72,8 @@ type counters struct {
 	CmdTakeover      atomic.Int64
 
 	// external + storage failures
-	GaleneFailures atomic.Int64
-	DBWriteFailed  atomic.Int64
+	GaleneFailures    atomic.Int64
+	DBWriteFailed     atomic.Int64
 	DBIntegrityFailed atomic.Int64
 }
 
@@ -94,13 +94,13 @@ func (c *counters) snapshot() map[string]any {
 			"room": c.QuotaRoom.Load(), "ticket": c.QuotaTicket.Load(),
 			"participant": c.QuotaParticipant.Load(), "command_cap": c.QuotaCommandCap.Load()},
 		"reservations": map[string]any{
-			"released": c.ReservationReleased.Load(),
+			"released":  c.ReservationReleased.Load(),
 			"recovered": c.ReservationRecovered.Load(),
 			"failed":    c.ReservationFailed.Load()},
 		"pruned": map[string]any{
 			"rooms": c.PrunedRooms.Load(), "tickets": c.PrunedTickets.Load(),
 			"commands_retired": c.PrunedCommandsRetired.Load(),
-			"tombstones": c.PrunedTombstones.Load(), "failed": c.PruneFailed.Load()},
+			"tombstones":       c.PrunedTombstones.Load(), "failed": c.PruneFailed.Load()},
 		"wal_checkpoint": map[string]any{
 			"attempted": c.CheckpointAttempted.Load(), "completed": c.CheckpointCompleted.Load(),
 			"busy": c.CheckpointBusy.Load(), "failed": c.CheckpointFailed.Load()},
@@ -116,8 +116,8 @@ func (c *counters) snapshot() map[string]any {
 			"conflict": c.CmdConflict.Load(), "duplicate": c.CmdDuplicate.Load(),
 			"retired_replay": c.CmdRetiredReplay.Load(), "takeover": c.CmdTakeover.Load()},
 		"failures": map[string]any{
-			"galene": c.GaleneFailures.Load(),
-			"db_write": c.DBWriteFailed.Load(),
+			"galene":       c.GaleneFailures.Load(),
+			"db_write":     c.DBWriteFailed.Load(),
 			"db_integrity": c.DBIntegrityFailed.Load()},
 	}
 }

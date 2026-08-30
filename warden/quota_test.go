@@ -353,8 +353,8 @@ func TestCommandCapRejectsAndDuplicatesDoNot(t *testing.T) {
 }
 
 // A FAILED command must stay retryable. The failure path stores epoch=NULL,
-// and a bare `epoch = ''` comparison never matches NULL, which stranded
-// every retry at "in-progress".
+// and comparing epoch directly against the empty string never matches NULL,
+// which stranded every retry at "in-progress".
 func TestFailedCommandStaysRetryable(t *testing.T) {
 	testDB(t)
 	l := testLimits(t)

@@ -33,12 +33,12 @@ var ErrNoGroup = errors.New("no-such-group")
 // Galene wraps the localhost admin API and the operator websocket.
 // Token ids ARE token values, so nothing here may log them.
 type Galene struct {
-	base  string // http://127.0.0.1:8443
-	ws    string // ws://127.0.0.1:8443/ws
-	pub   string // https://sfu.gluewear.com
-	user  string
-	pass  string
-	http  *http.Client
+	base string // http://127.0.0.1:8443
+	ws   string // ws://127.0.0.1:8443/ws
+	pub  string // https://sfu.gluewear.com
+	user string
+	pass string
+	http *http.Client
 }
 
 func NewGalene(envPath string) (*Galene, error) {
@@ -304,9 +304,9 @@ func (c *opConn) kick(id string) error {
 // than a hopeful success.
 
 const (
-	reconcileRounds   = 6
-	reconcileInterval = 700 * time.Millisecond
-	reconcileDeadline = 25 * time.Second
+	reconcileRounds    = 6
+	reconcileInterval  = 700 * time.Millisecond
+	reconcileDeadline  = 25 * time.Second
 	stableObservations = 2
 )
 

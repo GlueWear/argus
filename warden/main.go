@@ -26,8 +26,8 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"syscall"
 	"sync/atomic"
+	"syscall"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -45,8 +45,8 @@ const (
 	hostSlots   = 3
 	// unique command rows across all hosts (2b.2)
 	capCommandRowsGlobal = 200000
-	admitWait   = 3 * time.Second
-	opDeadline  = 60 * time.Second
+	admitWait            = 3 * time.Second
+	opDeadline           = 60 * time.Second
 
 	// leases
 	leaseMinTTL     = 30 * time.Second
@@ -55,7 +55,7 @@ const (
 	sweepEvery      = 10 * time.Second
 	// A room left in 'ending' for longer than one operation deadline was
 	// abandoned by a dead worker, not left by one still running.
-	endingGrace = 90 * time.Second
+	endingGrace     = 90 * time.Second
 	healthProbeFreq = 15 * time.Second
 )
 
@@ -93,23 +93,23 @@ type Result struct {
 	Deadline  int64  `json:"deadline"` // unix UTC
 
 	// combined call access (never logged)
-	SFU            string      `json:"sfu,omitempty"`
-	Participant    string      `json:"participant,omitempty"`
-	ICE            []ICEServer `json:"ice,omitempty"`
+	SFU         string      `json:"sfu,omitempty"`
+	Participant string      `json:"participant,omitempty"`
+	ICE         []ICEServer `json:"ice,omitempty"`
 	// flat forms, so a typed consumer need not parse nested optional objects
-	StunURLs       []string    `json:"stun_urls,omitempty"`
-	TurnURLs       []string    `json:"turn_urls,omitempty"`
-	TurnUser       string      `json:"turn_username,omitempty"`
-	TurnCredential string      `json:"turn_credential,omitempty"`
-	AccessExpires  int64       `json:"access_expires,omitempty"`
-	RenewAfter     int64       `json:"renew_after,omitempty"`
+	StunURLs       []string `json:"stun_urls,omitempty"`
+	TurnURLs       []string `json:"turn_urls,omitempty"`
+	TurnUser       string   `json:"turn_username,omitempty"`
+	TurnCredential string   `json:"turn_credential,omitempty"`
+	AccessExpires  int64    `json:"access_expires,omitempty"`
+	RenewAfter     int64    `json:"renew_after,omitempty"`
 }
 
 var (
-	db      *sql.DB
-	bearer  []byte
-	gal     *Galene
-	rooms   = NewLockRegistry()
+	db     *sql.DB
+	bearer []byte
+	gal    *Galene
+	rooms  = NewLockRegistry()
 	// Two admission classes. Sizes come from configuration at startup and
 	// are RESTART-ONLY: a running semaphore is never resized.
 	metaGlobSem   *Semaphore
@@ -1049,35 +1049,35 @@ func handle(w http.ResponseWriter, r *http.Request) {
 // The map is an allowlist: an error not named here stays 502, so a newly
 // added infrastructure failure never silently reads as a clean answer.
 var businessErrors = map[string]bool{
-	"no-such-room":    true,
-	"room-ended":      true,
-	"room-ending":     true,
+	"no-such-room":      true,
+	"room-ended":        true,
+	"room-ending":       true,
 	"room-provisioning": true,
-	"lease-expired":   true,
-	"bad-participant": true,
-	"unknown-op":      true,
+	"lease-expired":     true,
+	"bad-participant":   true,
+	"unknown-op":        true,
 	// 2b.2: admission, rate and quota outcomes are DEFINITIVE answers, not
 	// gateway failures. They are returned as 200 with ok:false and a
 	// distinct reason so the reason survives the gateway and reaches the
 	// ship; the gateway discards the body of any non-200 response.
-	"busy-host":             true,
-	"busy-global":           true,
-	"rate-limited-requests": true,
-	"rate-limited-rooms":    true,
-	"rate-limited-tickets":  true,
-	"rate-limited-roster":   true,
-	"room-quota":            true,
-	"room-quota-host":       true,
-	"room-quota-global":     true,
-	"ticket-quota":          true,
-	"ticket-quota-room":     true,
-	"ticket-quota-host":     true,
-	"command-cap":           true,
-	"request-retired":       true,
-	"participant-quota":     true,
+	"busy-host":                             true,
+	"busy-global":                           true,
+	"rate-limited-requests":                 true,
+	"rate-limited-rooms":                    true,
+	"rate-limited-tickets":                  true,
+	"rate-limited-roster":                   true,
+	"room-quota":                            true,
+	"room-quota-host":                       true,
+	"room-quota-global":                     true,
+	"ticket-quota":                          true,
+	"ticket-quota-room":                     true,
+	"ticket-quota-host":                     true,
+	"command-cap":                           true,
+	"request-retired":                       true,
+	"participant-quota":                     true,
 	"request-id-reused-with-different-body": true,
 	"in-progress":                           true,
-	"service-unavailable":   true,
+	"service-unavailable":                   true,
 }
 
 func statusFor(res Result) int {
@@ -1141,12 +1141,12 @@ func readiness() (int, map[string]any) {
 			pending = []string{}
 		}
 		cfg = map[string]any{
-			"loaded":    true,
-			"generation": limitsGen.Load(),
-			"loaded_at": loadedAt.UTC().Format(time.RFC3339),
-			"enforced":          true,
+			"loaded":                 true,
+			"generation":             limitsGen.Load(),
+			"loaded_at":              loadedAt.UTC().Format(time.RFC3339),
+			"enforced":               true,
 			"failpoints_compiled_in": failpointsCompiledIn,
-			"restart_required":  pending,
+			"restart_required":       pending,
 			// Stated precisely: Galene enforces max-clients per group, so
 			// the per-room participant limit is real. There is no global
 			// live-client cap; see participant_limits below.
@@ -1164,10 +1164,10 @@ func readiness() (int, map[string]any) {
 		"configured": true,
 		// Readability is probed. Writability is NOT probed; it is
 		// reported only as observed from real command writes.
-		"db_readable":    p.Readable,
-		"db_last_write":  lastWriteState(),
-		"db_probe_scope": "readability probed; writability observed from real writes only",
-		"db_ready":       p.OK && lastWriteState() != "failed",
+		"db_readable":      p.Readable,
+		"db_last_write":    lastWriteState(),
+		"db_probe_scope":   "readability probed; writability observed from real writes only",
+		"db_ready":         p.OK && lastWriteState() != "failed",
 		"db_probe_note":    p.Note,
 		"db_probe_age_sec": age,
 		"galene_reachable": galOK,

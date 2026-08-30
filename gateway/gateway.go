@@ -34,8 +34,8 @@ const (
 	remoteHost = "calls.gluewear.com"
 	// Readiness is a separate fixed URL; a caller can never supply one.
 	remoteReadyURL = "https://calls.gluewear.com/warden/v1/readyz"
-	maxBody    = 4096
-	maxResp    = 8192
+	maxBody        = 4096
+	maxResp        = 8192
 )
 
 var shipRe = regexp.MustCompile(`^~[a-z-]{3,60}$`)
@@ -48,7 +48,6 @@ type req struct {
 	TTL         int    `json:"ttl,omitempty"` // lease seconds; warden clamps
 	Subject     string `json:"subject"`
 }
-
 
 var (
 	localKey    []byte

@@ -61,24 +61,24 @@ type Limits struct {
 	TicketsLivePerHost int
 
 	// ---- TTL and lifetime
-	LeaseMinTTL     time.Duration
-	LeaseDefaultTTL time.Duration
-	LeaseMaxTTL     time.Duration
-	RoomMaxLifetime time.Duration
-	TicketTTL       time.Duration
+	LeaseMinTTL      time.Duration
+	LeaseDefaultTTL  time.Duration
+	LeaseMaxTTL      time.Duration
+	RoomMaxLifetime  time.Duration
+	TicketTTL        time.Duration
 	OperatorTokenTTL time.Duration
 	// TURN/Galene combined access credential lifetime
 	AccessTTL time.Duration
 
 	// ---- rates (per authenticated host)
-	RateRoomsPerMin    int
-	RateRoomsBurst     int
-	RateTicketsPerMin  int
-	RateTicketsBurst   int
-	RateRosterPerMin   int
-	RateRosterBurst    int
-	RateRequestsPerMin int
-	RateRequestsBurst  int
+	RateRoomsPerMin       int
+	RateRoomsBurst        int
+	RateTicketsPerMin     int
+	RateTicketsBurst      int
+	RateRosterPerMin      int
+	RateRosterBurst       int
+	RateRequestsPerMin    int
+	RateRequestsBurst     int
 	CapCommandRowsPerHost int
 
 	// ---- retention

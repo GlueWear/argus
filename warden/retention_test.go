@@ -17,7 +17,7 @@ func seedRoom(t *testing.T, host, key, state string, ageDays float64) {
 
 func seedCommand(t *testing.T, host, req, state string, ageHours float64) {
 	t.Helper()
-	ts := time.Now().Add(-time.Duration(ageHours*float64(time.Hour))).Unix()
+	ts := time.Now().Add(-time.Duration(ageHours * float64(time.Hour))).Unix()
 	if _, err := db.Exec(`INSERT INTO commands(host,req,fingerprint,state,epoch,response,created,updated)
 	  VALUES(?,?,'fp1',?,'ep',?,?,?)`, host, req, state, `{"ok":true}`, ts, ts); err != nil {
 		t.Fatal(err)
@@ -26,7 +26,7 @@ func seedCommand(t *testing.T, host, req, state string, ageHours float64) {
 
 func seedTicket(t *testing.T, token, group string, revoked int, expiredHours, ageDays float64) {
 	t.Helper()
-	exp := time.Now().Add(-time.Duration(expiredHours*float64(time.Hour))).Unix()
+	exp := time.Now().Add(-time.Duration(expiredHours * float64(time.Hour))).Unix()
 	created := time.Now().Add(-time.Duration(ageDays*24) * time.Hour).Unix()
 	if _, err := db.Exec(`INSERT INTO tickets(token,group_name,participant,expires,revoked,created,host,req,state)
 	  VALUES(?,?,'~p',?,?,?,'~a',?,'issued')`, token, group, exp, revoked, created, token); err != nil {
@@ -67,7 +67,7 @@ func TestRetentionBoundaries(t *testing.T) {
 	// tickets: revoked AND expired AND older than 7 days
 	seedTicket(t, "tok-old-revoked", "nbw-g", 1, 1, 7.1)
 	seedTicket(t, "tok-new-revoked", "nbw-g", 1, 1, 6.9)
-	seedTicket(t, "tok-live", "nbw-g", 0, -100, 30)     // unrevoked -> never
+	seedTicket(t, "tok-live", "nbw-g", 0, -100, 30)      // unrevoked -> never
 	seedTicket(t, "tok-unexpired", "nbw-g", 1, -100, 30) // not yet expired -> never
 
 	prune()
