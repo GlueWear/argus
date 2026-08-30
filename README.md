@@ -63,18 +63,14 @@ blocks `secrets/`, `*.key`, `*.bearer`, and every `*.env` that is not an
 
 ## Before you run this yourself
 
-Three things are **not** yet portable, and are recorded honestly rather than
-quietly fixed:
+Two things to read first:
 
-1. **The gateway's upstream is hard-coded.** `gateway/gateway.go` compiles in
-   `calls.gluewear.com`. A third party must change those two constants (or
-   make them configurable) before the gateway is useful to them.
-2. **`gateway/gateway_tls_test.go` tests against a live host** by IP. It
-   documents a real finding about TLS verification; it will not pass
-   elsewhere unmodified.
-3. **See `SECURITY.md`** before exposing a TURN server built from this
+1. **See `SECURITY.md`** before exposing a TURN server built from this
    configuration to the public internet. There is a known, unmitigated
-   open-relay property.
+   open-relay property. It is documented rather than hidden: the security of
+   this system does not depend on the source being secret.
+2. **Nothing here has been independently reviewed**, and it has not yet been
+   deployed by anyone other than its author.
 
 ## Status
 

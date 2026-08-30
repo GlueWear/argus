@@ -29,13 +29,17 @@ import (
 
 const (
 	listenAddr = "127.0.0.1:8899"
-	// Destination is FIXED here. A caller can never supply a URL.
-	remoteURL  = "https://calls.gluewear.com/warden/v1/command"
-	remoteHost = "calls.gluewear.com"
-	// Readiness is a separate fixed URL; a caller can never supply one.
-	remoteReadyURL = "https://calls.gluewear.com/warden/v1/readyz"
-	maxBody        = 4096
-	maxResp        = 8192
+	maxBody    = 4096
+	maxResp    = 8192
+)
+
+// Destination is fixed at STARTUP from configuration and is never taken from
+// a request. A caller can still never supply a URL; the difference is only
+// that the operator, rather than this source file, decides which warden.
+var (
+	remoteURL      string
+	remoteHost     string
+	remoteReadyURL string
 )
 
 var shipRe = regexp.MustCompile(`^~[a-z-]{3,60}$`)
@@ -67,6 +71,8 @@ func strictClient() *http.Client {
 			Proxy: nil, // do NOT inherit HTTP(S)_PROXY
 			TLSClientConfig: &tls.Config{
 				MinVersion: tls.VersionTLS12,
+				// pinned to the configured warden host, so a DNS or
+				// routing surprise cannot be silently accepted
 				ServerName: remoteHost,
 			},
 			TLSHandshakeTimeout:   8 * time.Second,
@@ -315,7 +321,13 @@ func main() {
 		exe, _ := os.Executable()
 		dir = filepath.Dir(exe)
 	}
-	var err error
+	cfg, err := loadGatewayConfig(dir)
+	if err != nil {
+		log.Fatalf("configuration: %v", err)
+	}
+	remoteURL, remoteHost, remoteReadyURL = cfg.CommandURL, cfg.Host, cfg.ReadyzURL
+	log.Printf("warden endpoint configured host=%s", remoteHost)
+
 	lk, err := readSecret(filepath.Join(dir, "secrets", "local.key"))
 	if err != nil {
 		log.Fatalf("local key: %v", err)

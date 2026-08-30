@@ -1,0 +1,14 @@
+# $GW_DIR/warden.conf   mode 0600
+#
+# The gateway REQUIRES this. There is no compiled-in default: a gateway that
+# does not know where its warden is refuses to start rather than guessing,
+# which is what stops a fresh build from pointing at somebody else's warden.
+#
+# Must be https. The gateway exists because the Urbit runtime does not verify
+# TLS; a plain-http warden would hand that weakness straight back.
+#
+# /command and /readyz are derived from this, so the URL and the TLS
+# ServerName can never disagree.
+#
+# ARGUS_WARDEN_BASE in the environment overrides this file.
+warden_base = https://calls.example.com/warden/v1

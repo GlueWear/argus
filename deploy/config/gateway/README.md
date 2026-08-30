@@ -1,4 +1,9 @@
-# Gateway secrets
+# Gateway configuration and secrets
+
+`warden.conf` (mode `0600`) sets the warden's base URL and is **required** --
+see `warden.conf.example`. `ARGUS_WARDEN_BASE` overrides it.
+
+## Secrets
 
 The gateway reads two files from `$GW_DIR/secrets/` (default: the directory
 holding the binary). Both are single-line, mode `0600`, and neither may be
