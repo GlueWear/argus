@@ -1,0 +1,27 @@
+From: Noltbook Phase 1 deployment
+Subject: [PATCH] rtpconn: guard against nil c.group in pushClientAction
+
+handleAction dereferences c.group without a nil check when handling
+pushClientAction. A client that has just left a group sets c.group to
+nil (webclient.go:1341), but a pushClientAction queued before that may
+still be pending in its action channel. Dequeuing it then panics on
+c.group.Name().
+
+There is no recover() in the package, so this panic terminates the
+whole process, dropping every group on the server rather than the one
+connection involved.
+
+The same handler already uses this exact idiom at webclient.go:1402:
+    if c.group == nil || c.group.Name() != m.Group {
+
+--- a/rtpconn/webclient.go
++++ b/rtpconn/webclient.go
+@@ -1160,7 +1160,7 @@
+ 		}
+ 
+ 	case pushClientAction:
+-		if a.group != c.group.Name() {
++		if c.group == nil || a.group != c.group.Name() {
+ 			log.Printf("got client for wrong group")
+ 			return nil
+ 		}
