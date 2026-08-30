@@ -1,0 +1,76 @@
+# Noltbook Phase 1 - DEVELOPMENT ONLY configuration.
+# Not hardened for unattended public production use.
+
+listening-port=3478
+tls-listening-port=5349
+
+# Droplet's own public IP. No reserved-IP NAT in this configuration,
+# so no external-ip mapping is required.
+listening-ip=YOUR.PRIVATE.IP
+relay-ip=YOUR.PRIVATE.IP
+# Reserved IP DNATs 1:1 to a private anchor (verified by capture).
+external-ip=YOUR.PUBLIC.IP/YOUR.PRIVATE.IP   # 1:1 DNAT; drop the second half if none
+
+# Bounded relay allocation range - matches the ufw rule exactly.
+min-port=49160
+max-port=49200
+
+# TURN REST API (ephemeral credentials). The master secret never
+# leaves this file; ships receive only short-lived derived credentials.
+use-auth-secret
+static-auth-secret=REPLACE_ME_64_RANDOM_HEX_CHARS
+realm=turn.example.com
+
+cert=/etc/letsencrypt/live/turn.example.com/fullchain.pem
+pkey=/etc/letsencrypt/live/turn.example.com/privkey.pem
+no-tlsv1
+no-tlsv1_1
+# Browsers use turns: over TLS/TCP only; no browser implements TURN over DTLS.
+# Disabling removes an untested listener and matches the firewall (TCP 5349 only).
+no-dtls
+
+fingerprint
+no-cli
+no-multicast-peers
+no-loopback-peers
+
+# Deny relaying into private / reserved space: a public TURN server
+# must not become a proxy into internal networks.
+denied-peer-ip=0.0.0.0-0.255.255.255
+denied-peer-ip=10.0.0.0-10.255.255.255
+denied-peer-ip=100.64.0.0-100.127.255.255
+denied-peer-ip=127.0.0.0-127.255.255.255
+denied-peer-ip=169.254.0.0-169.254.255.255
+denied-peer-ip=172.16.0.0-172.31.255.255
+denied-peer-ip=192.168.0.0-192.168.255.255
+denied-peer-ip=::1
+denied-peer-ip=fe80::-febf:ffff:ffff:ffff:ffff:ffff:ffff:ffff
+denied-peer-ip=fc00::-fdff:ffff:ffff:ffff:ffff:ffff:ffff:ffff
+
+stale-nonce=600
+max-allocate-lifetime=3600
+user-quota=4
+total-quota=32
+
+syslog
+
+# ---- bandwidth limits ----
+# UNITS verified on this host, not assumed:
+#   max-bps      : BYTES per second per SESSION; input and output streams are
+#                  counted SEPARATELY (installed example config, 4.6.1).
+#                  Excess is dropped or temporarily suppressed.
+#   bps-capacity : BYTES per second, COMBINED server capacity. Confirmed by
+#                  the server's own startup line:
+#                  "N bytes per second allowed, combined server capacity".
+#
+# 750 kB/s per session = 6 Mbps each way: ample for camera + screen share +
+# audio (realistic peak ~6 Mbps combined) while bounding one credential.
+# (a realistic peak is ~6 Mbps) while bounding a single abusive credential.
+# IMPORTANT, learned by testing: coturn RESERVES max-bps per allocation
+# against bps-capacity, so bps-capacity/max-bps is a HARD CAP on concurrent
+# allocations regardless of real traffic. They must be set consistently or
+# bandwidth silently becomes the allocation limit (we hit 486 "Allocation
+# Bandwidth Quota Reached" at 6 allocations with 6MB/1MB).
+# 24 MB/s = 32 x 750 kB/s, so total-quota is the binding constraint.
+max-bps=750000
+bps-capacity=24000000

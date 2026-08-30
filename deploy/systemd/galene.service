@@ -1,0 +1,42 @@
+[Unit]
+Description=Galene SFU (Noltbook Phase 1)
+Documentation=https://galene.org/
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=galene
+Group=galene
+WorkingDirectory=/var/lib/galene
+# -insecure: plain HTTP on loopback only; nginx terminates TLS.
+# -turn "": built-in TURN disabled; coturn is the sole TURN server.
+ExecStart=/opt/galene/current/galene \
+    -insecure \
+    -http 127.0.0.1:8443 \
+    -turn "" \
+    -udp-range 50000-50200 \
+    -data /var/lib/galene/data \
+    -groups /var/lib/galene/groups \
+    -recordings /var/lib/galene/recordings \
+    -static /opt/galene/current/static
+Restart=on-failure
+RestartSec=3s
+LimitNOFILE=65536
+
+# hardening
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+LockPersonality=true
+ReadWritePaths=/var/lib/galene
+
+[Install]
+WantedBy=multi-user.target

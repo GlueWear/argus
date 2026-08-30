@@ -1,0 +1,30 @@
+[Unit]
+Description=Noltbook managed call warden (W1)
+After=network-online.target galene.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=wardensvc
+Group=wardensvc
+ExecStart=/opt/noltbook-warden/warden
+Restart=always
+RestartSec=2s
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictNamespaces=true
+LockPersonality=true
+RestrictAddressFamilies=AF_INET AF_UNIX
+ReadWritePaths=/var/lib/noltbook-warden
+MemoryMax=256M
+TasksMax=64
+
+[Install]
+WantedBy=multi-user.target

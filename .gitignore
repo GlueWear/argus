@@ -1,0 +1,21 @@
+# Secrets. Nothing under these names may ever be committed.
+secrets/
+*.key
+*.bearer
+*.env
+!*.env.example
+bearer
+turn.env
+galene.env
+admin.env
+
+# Build output and runtime state
+warden/warden
+gateway/gateway
+*.db
+*.db-wal
+*.db-shm
+*.log
+
+# OS debris
+.DS_Store
