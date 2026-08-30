@@ -35,7 +35,7 @@ var ErrNoGroup = errors.New("no-such-group")
 type Galene struct {
 	base string // http://127.0.0.1:8443
 	ws   string // ws://127.0.0.1:8443/ws
-	pub  string // https://sfu.gluewear.com
+	pub  string // e.g. https://sfu.example.com
 	user string
 	pass string
 	http *http.Client

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Install to ~/Library/LaunchAgents/ and adjust the two absolute paths.
+
+  GW_DIR points OUTSIDE the checkout on purpose: git pull, git clean and a
+  fresh clone must never be able to touch a secret, and no secret belongs
+  inside an Urbit pier.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.gluewear.argus-gateway</string>
+  <key>ProgramArguments</key>
+  <array><string>/Users/YOU/argus/gateway/argus-gateway</string></array>
+  <key>EnvironmentVariables</key>
+  <dict><key>GW_DIR</key><string>/Users/YOU/.config/argus-gateway</string></dict>
+  <key>WorkingDirectory</key><string>/Users/YOU/argus/gateway</string>
+  <key>RunAtLoad</key><true/>
+  <key>KeepAlive</key><true/>
+  <key>ProcessType</key><string>Background</string>
+  <key>StandardOutPath</key><string>/Users/YOU/Library/Logs/argus-gateway.log</string>
+  <key>StandardErrorPath</key><string>/Users/YOU/Library/Logs/argus-gateway.log</string>
+</dict>
+</plist>

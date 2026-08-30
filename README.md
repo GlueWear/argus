@@ -72,6 +72,23 @@ Two things to read first:
 2. **Nothing here has been independently reviewed**, and it has not yet been
    deployed by anyone other than its author.
 
+## Running the gateway
+
+See [`deploy/OPERATIONS.md`](deploy/OPERATIONS.md) for layout, update,
+restart, rollback and secret-rotation procedures.
+
+## Protocol
+
+The gateway-warden wire contract is specified, schema'd and tested in
+[`protocol/v1/`](protocol/v1/).
+
+## Licence
+
+MIT — see [`LICENSE`](LICENSE). Copyright 2026 GlueWear.
+
+Galène is not vendored; see [`patches/galene/`](patches/galene/) for the
+pinned upstream, the deployed patch, and upstream's own licence.
+
 ## Status
 
 Working, deployed, and exercised — but not independently reviewed, and not
