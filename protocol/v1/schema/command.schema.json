@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GlueWear/argus/protocol/v1/command.schema.json",
+  "title": "Argus gateway command (v1)",
+  "description": "What %noltbook-calls POSTs to the gateway, and what the gateway rebuilds and POSTs to the warden. Documents the format already in use; no version field is carried on the wire.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["req", "op", "room", "subject"],
+  "properties": {
+    "req": {
+      "type": "string", "minLength": 1, "maxLength": 128,
+      "description": "Caller-chosen idempotency key, unique per (subject, req). Replaying it returns the first answer with duplicate:true."
+    },
+    "op": {
+      "type": "string",
+      "enum": ["ensure-room", "renew-room", "issue-ticket", "evict-participant",
+               "end-room", "room-status", "issue-access", "renew-access"]
+    },
+    "room": { "type": "string", "minLength": 1, "maxLength": 128 },
+    "subject": {
+      "type": "string", "pattern": "^~[a-z-]{3,60}$",
+      "description": "AUTHENTICATED AUTHORITY. The ship on whose behalf the command runs. Derived by %noltbook-calls from src.bowl and inserted by it; never taken from a browser or from a request header. The room namespace is keyed by it, so it decides ownership."
+    },
+    "participant": {
+      "type": "string", "pattern": "^~[a-z-]{3,60}$",
+      "description": "The ship an access grant or eviction is ABOUT. Deliberately distinct from subject: naming a participant grants that participant access to the subject's room, and transfers no authority to them."
+    },
+    "ttl": {
+      "type": "integer", "minimum": 0,
+      "description": "Requested lease seconds. Lease operations only. The warden clamps it to its configured bounds; the value returned in deadline is authoritative."
+    }
+  }
+}

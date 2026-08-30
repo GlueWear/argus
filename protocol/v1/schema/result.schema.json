@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/GlueWear/argus/protocol/v1/result.schema.json",
+  "title": "Argus warden result (v1)",
+  "description": "What the warden returns and what the gateway forwards VERBATIM. The gateway validates only the envelope; it must never re-serialise this object.",
+  "type": "object",
+  "required": ["ok", "req", "op", "subject", "state", "clients", "gen", "deadline"],
+  "properties": {
+    "ok":        { "type": "boolean" },
+    "req":       { "type": "string", "description": "Echoes the command's req. The gateway rejects a mismatch." },
+    "op":        { "type": "string" },
+    "subject":   { "type": "string", "pattern": "^~[a-z-]{3,60}$", "description": "Echoes the command's subject. The gateway rejects a mismatch." },
+    "duplicate": { "type": "boolean", "description": "This req was already answered; the original answer is replayed." },
+    "error":     { "type": "string", "description": "Safe category. Present only when ok is false. Never an upstream body, URL, credential or trace." },
+
+    "state":    { "type": "string", "description": "ALWAYS PRESENT, including the empty string. Must not be omitempty." },
+    "clients":  { "type": "integer", "minimum": 0, "description": "ALWAYS PRESENT, including zero. omitempty here previously deleted clients:0 and the ship read it as malformed." },
+    "gen":      { "type": "integer", "description": "ALWAYS PRESENT, including zero. Room incarnation; a reused room key gets a new gen." },
+    "deadline": { "type": "integer", "description": "ALWAYS PRESENT, including zero. Lease expiry, Unix seconds UTC." },
+
+    "group":    { "type": "string", "description": "Managed group id on the SFU." },
+    "location": { "type": "string", "description": "Human-visible group page." },
+    "token":    { "type": "string", "description": "SECRET. Galene join credential, minted per participant. Never logged." },
+    "revoked":  { "type": "integer", "minimum": 0 },
+    "kicked":   { "type": "integer", "minimum": 0 },
+
+    "sfu":         { "type": "string", "description": "Websocket URL the browser connects to." },
+    "participant": { "type": "string", "pattern": "^~[a-z-]{3,60}$", "description": "Who this access was minted FOR." },
+    "ice": {
+      "type": "array",
+      "description": "Browser-ready RTCIceServer entries. SECRET on TURN entries.",
+      "items": {
+        "type": "object",
+        "required": ["urls"],
+        "properties": {
+          "urls":       { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+          "username":   { "type": "string", "description": "SECRET. TURN entries only." },
+          "credential": { "type": "string", "description": "SECRET. TURN entries only." }
+        }
+      }
+    },
+    "stun_urls":       { "type": "array", "items": { "type": "string" } },
+    "turn_urls":       { "type": "array", "items": { "type": "string" } },
+    "turn_username":   { "type": "string", "description": "SECRET." },
+    "turn_credential": { "type": "string", "description": "SECRET." },
+    "access_expires":  { "type": "integer", "description": "Unix seconds. Credentials stop being usable for NEW allocations." },
+    "renew_after":     { "type": "integer", "description": "Unix seconds. When the caller should ask for fresh credentials." }
+  }
+}
