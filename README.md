@@ -7,6 +7,10 @@ because that repository's root *is* the Clay desk and anything added to it
 ships to every subscriber. This repository holds everything that runs on a
 host rather than on a ship.
 
+> **Want to run one?** Start at **[`INSTALL.md`](INSTALL.md)** — the from-zero
+> setup path for a call host and a broker ship. Already running one? See
+> [`deploy/OPERATIONS.md`](deploy/OPERATIONS.md).
+
 > **Name.** `%argus` was also the name of the Urbit proof-of-concept agent
 > that preceded this work. That agent is gone. Here, Argus means the
 > infrastructure.
@@ -72,10 +76,14 @@ Two things to read first:
 2. **Nothing here has been independently reviewed**, and it has not yet been
    deployed by anyone other than its author.
 
-## Running the gateway
+## Running a node
 
-See [`deploy/OPERATIONS.md`](deploy/OPERATIONS.md) for layout, update,
-restart, rollback and secret-rotation procedures.
+[`INSTALL.md`](INSTALL.md) is the from-zero path: what to provision, in what
+order, and how to verify each stage. It covers both installs — the call host
+(warden, Galene, coturn, nginx) and the broker ship's gateway sidecar.
+
+Once a node is up, [`deploy/OPERATIONS.md`](deploy/OPERATIONS.md) covers
+layout, update, restart, rollback and secret rotation.
 
 ## Protocol
 
